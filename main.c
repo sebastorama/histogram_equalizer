@@ -23,7 +23,6 @@ void draw_image(BMP_pixel_matrix bmp, SDL_Surface * s, int x, int y) {
           0xFF);
     }
   }
-  SDL_Flip(s);
 }
 
 void draw_histogram(SDL_Surface * s, unsigned long int * histogram, int depth, int scale, int x, int y, Uint32 color) {
@@ -40,7 +39,6 @@ void draw_histogram(SDL_Surface * s, unsigned long int * histogram, int depth, i
   }
 
   free(scaled_histogram);
-  SDL_Flip(s);
 }
 
 
@@ -72,6 +70,11 @@ void equalize_pixel(unsigned long int * pixel, unsigned long int * cdf, unsigned
 }
 
 int main(int argc, char ** argv) {
+  if(argc < 2) {
+    print_usage();
+    exit(0);
+  }
+
   SDL_Surface *screen;
 
   if (!(screen = SDL_SetVideoMode(WIDTH, HEIGHT, DEPTH, SDL_HWSURFACE)))
@@ -82,33 +85,21 @@ int main(int argc, char ** argv) {
 
   int i, j;
 
-  unsigned long int * r_hist =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * g_hist =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * b_hist =
-    calloc(256, sizeof(unsigned long int));
+  unsigned long int * r_hist = calloc(256, sizeof(unsigned long int));
+  unsigned long int * g_hist = calloc(256, sizeof(unsigned long int));
+  unsigned long int * b_hist = calloc(256, sizeof(unsigned long int));
 
-  unsigned long int * r_hist_eq =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * g_hist_eq =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * b_hist_eq =
-    calloc(256, sizeof(unsigned long int));
+  unsigned long int * r_hist_eq = calloc(256, sizeof(unsigned long int));
+  unsigned long int * g_hist_eq = calloc(256, sizeof(unsigned long int));
+  unsigned long int * b_hist_eq = calloc(256, sizeof(unsigned long int));
 
-  unsigned long int * cdf_r_hist =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * cdf_g_hist =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * cdf_b_hist =
-    calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_r_hist = calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_g_hist = calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_b_hist = calloc(256, sizeof(unsigned long int));
 
-  unsigned long int * cdf_r_hist_eq =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * cdf_g_hist_eq =
-    calloc(256, sizeof(unsigned long int));
-  unsigned long int * cdf_b_hist_eq =
-    calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_r_hist_eq = calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_g_hist_eq = calloc(256, sizeof(unsigned long int));
+  unsigned long int * cdf_b_hist_eq = calloc(256, sizeof(unsigned long int));
 
   unsigned long int r_scale, g_scale, b_scale;
   unsigned long int r_min, g_min, b_min;
@@ -118,10 +109,6 @@ int main(int argc, char ** argv) {
 
   input_file = fopen(argv[1], "rb");
 
-  if(argc < 2) {
-    print_usage();
-    exit(0);
-  }
 
 
   bmp_header header = get_header(input_file);
@@ -193,6 +180,7 @@ int main(int argc, char ** argv) {
   write_pixels(header, bmp_matrix, output_file);
 
   draw_image(bmp_matrix, screen, bmp_matrix.width+20, 0);
+  SDL_Flip(screen);
 
   fclose(output_file);
   fclose(input_file);
@@ -205,5 +193,21 @@ int main(int argc, char ** argv) {
         running = false;
     }
   }
+
+  free(r_hist);
+  free(g_hist);
+  free(b_hist);
+
+  free(r_hist_eq);
+  free(g_hist_eq);
+  free(b_hist_eq);
+
+  free(cdf_r_hist);
+  free(cdf_g_hist);
+  free(cdf_b_hist);
+
+  free(cdf_r_hist_eq);
+  free(cdf_g_hist_eq);
+  free(cdf_b_hist_eq);
   return 0;
 }
