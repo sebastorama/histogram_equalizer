@@ -17,9 +17,9 @@ void draw_image(BMP_pixel_matrix bmp, SDL_Surface * s, int x, int y) {
 	for(i = (int)bmp.height-1; i >= 0; i--) {
 		for(j = 0; j < (int)bmp.width; j++) {
 			pixelRGBA(s, x+j, y+ ((int)bmp.height-1-i),
-					LE_TO_int(&bmp.pixels[i][j].red, 1),
-					LE_TO_int(&bmp.pixels[i][j].green, 1),
-					LE_TO_int(&bmp.pixels[i][j].blue, 1),
+					bmp.pixels[i][j].red,
+					bmp.pixels[i][j].green,
+					bmp.pixels[i][j].blue,
 					0xFF);
 		}
 	}
@@ -131,9 +131,9 @@ int main(int argc, char ** argv) {
 
 	for(i = 0; i < (int)bmp_matrix.height; i++) {
 		for(j = 0; j < (int)bmp_matrix.width; j++) {
-			update_histogram((unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].red, 1), r_hist);
-			update_histogram((unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].green, 1), g_hist);
-			update_histogram((unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].blue, 1), b_hist);
+			update_histogram(bmp_matrix.pixels[i][j].red, r_hist);
+			update_histogram(bmp_matrix.pixels[i][j].green, g_hist);
+			update_histogram(bmp_matrix.pixels[i][j].blue, b_hist);
 		}
 	}
 
@@ -158,9 +158,9 @@ int main(int argc, char ** argv) {
 
 	for(i = 0; i < (int)bmp_matrix.height; i++) {
 		for(j = 0; j < (int)bmp_matrix.width; j++) {
-      r_scale = (unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].red, 1);
-      g_scale = (unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].green, 1);
-      b_scale = (unsigned long int)LE_TO_int(&bmp_matrix.pixels[i][j].blue, 1);
+      r_scale = (unsigned long int) bmp_matrix.pixels[i][j].red;
+      g_scale = (unsigned long int) bmp_matrix.pixels[i][j].green;
+      b_scale = (unsigned long int) bmp_matrix.pixels[i][j].blue;
 
       equalize_pixel(&r_scale, cdf_r_hist, r_min, 256, (int)bmp_matrix.height*bmp_matrix.width);
       equalize_pixel(&g_scale, cdf_g_hist, g_min, 256, (int)bmp_matrix.height*bmp_matrix.width);
